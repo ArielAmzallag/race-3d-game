@@ -21,3 +21,5 @@ par le joueur
 cliquer interagir avec pour améliorer son score final.
 - Fin de partie: Gérez les fin de parties avec les collisions ou chronomètre et
 proposer de rejouer
+
+Le joueur contrôle une fusée. Les obstacles et bonus sont représantés par divers objets trouvés dans l'espace (ex:astéroides).
