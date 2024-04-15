@@ -1,0 +1,11 @@
+Model Information:
+* title:	Simple Star (Lowpoly)
+* source:	https://sketchfab.com/3d-models/simple-star-lowpoly-cf2b6a3cc74d4f62a94735c37bd69c9b
+* author:	Fernando (https://sketchfab.com/AlcGames)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Simple Star (Lowpoly)" (https://sketchfab.com/3d-models/simple-star-lowpoly-cf2b6a3cc74d4f62a94735c37bd69c9b) by Fernando (https://sketchfab.com/AlcGames) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

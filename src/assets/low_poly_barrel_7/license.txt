@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Barrel 7
+* source:	https://sketchfab.com/3d-models/low-poly-barrel-7-bb7998ad7ffb4a88aa7bf1072a750247
+* author:	Arthur.Zim (https://sketchfab.com/Arthur.Zim)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Barrel 7" (https://sketchfab.com/3d-models/low-poly-barrel-7-bb7998ad7ffb4a88aa7bf1072a750247) by Arthur.Zim (https://sketchfab.com/Arthur.Zim) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

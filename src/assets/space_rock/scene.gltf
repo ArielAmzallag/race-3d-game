@@ -1,0 +1,317 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 320,
+      "max": [
+        1.2345997095108032,
+        1.11737060546875,
+        3.0053958892822266
+      ],
+      "min": [
+        -1.219509482383728,
+        -1.1795306205749512,
+        -0.041490424424409866
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 3840,
+      "componentType": 5126,
+      "count": 320,
+      "max": [
+        0.9960729479789734,
+        0.9981177449226379,
+        0.9935858249664307
+      ],
+      "min": [
+        -0.9925720691680908,
+        -0.9976505041122437,
+        -0.9963384866714478
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 320,
+      "max": [
+        0.9718805551528931,
+        0.9998458623886108,
+        0.34970954060554504,
+        1.0
+      ],
+      "min": [
+        -0.5308948159217834,
+        -0.9642051458358765,
+        -0.9997742176055908,
+        1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 320,
+      "max": [
+        0.9891369342803955,
+        0.9901419878005981
+      ],
+      "min": [
+        0.019784534350037575,
+        0.005315576680004597
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 2560,
+      "componentType": 5126,
+      "count": 320,
+      "max": [
+        0.9891369342803955,
+        0.9901419878005981
+      ],
+      "min": [
+        0.019784534350037575,
+        0.005315576680004597
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5120,
+      "componentType": 5126,
+      "count": 320,
+      "max": [
+        0.9891369342803955,
+        0.9901419878005981
+      ],
+      "min": [
+        0.019784534350037575,
+        0.005315576680004597
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 1704,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Agustín Hönnun (https://sketchfab.com/Agustin_Honnun)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/space-rock-free-game-asset-agustin-honnun-c9ce5678bdbc443eab59b817a5534ead",
+      "title": "Space Rock | Free Game Asset | Agustin Honnun"
+    },
+    "generator": "Sketchfab-12.67.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 6816,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 7680,
+      "byteOffset": 6816,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 7680,
+      "byteOffset": 14496,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 5120,
+      "byteOffset": 22176,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 27296,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/Rock_MAT_baseColor.png"
+    },
+    {
+      "uri": "textures/Rock_MAT_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/Rock_MAT_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Rock_MAT",
+      "normalTexture": {
+        "index": 2
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0.0,
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "RockLP_Rock_MAT_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3,
+            "TEXCOORD_1": 4,
+            "TEXCOORD_2": 5
+          },
+          "indices": 6,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        0.018337057903409004,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.017169766232811856,
+        0.006437920208078932,
+        0.0,
+        0.0,
+        -0.006437920208078932,
+        0.017169766232811856,
+        0.0,
+        0.0,
+        203.13450622558597,
+        -134.56181335449213,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "ab485fcfe6c64010b9f3a07cc3e20fe3.fbx"
+    },
+    {
+      "children": [
+        3
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "matrix": [
+        100.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.629206793918314e-05,
+        -99.99999999999868,
+        0.0,
+        0.0,
+        99.99999999999868,
+        -1.629206793918314e-05,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "RockLP"
+    },
+    {
+      "mesh": 0,
+      "name": "RockLP_Rock_MAT_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ]
+}

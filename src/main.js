@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'; // Make sure to have this path correct
+
+const loader = new GLTFLoader();
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -8,6 +11,9 @@ camera.lookAt(0, 0, 0);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+scene.background = new THREE.Color(0x000000);
+scene.fog = new THREE.Fog(0x660094, 0, 750);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
@@ -27,12 +33,13 @@ finishLine.position.z = -roadLength / 2 + 10;
 finishLine.rotation.x = Math.PI / 2;
 scene.add(finishLine);
 
+
 const carWidth = 2;
 const carLength = 4;
 let carVelocity = new THREE.Vector3(0, 0, 0);
 carVelocity.multiplyScalar(0.5);
 carVelocity = new THREE.Vector3(0, 0, -0.5);
-const car = new THREE.Mesh(new THREE.ConeGeometry(carWidth / 2, carLength, 32), new THREE.MeshLambertMaterial({ color: 0x0000ff }));
+let car = new THREE.Mesh(new THREE.ConeGeometry(carWidth / 2, carLength, 32), new THREE.MeshLambertMaterial({ color: 0x0000ff }));
 car.rotateX(-(Math.PI / 2));
 car.position.z = 100;
 car.position.y = 0.5;
@@ -48,70 +55,9 @@ let carAcceleration = new THREE.Vector3(0, 0, 0);
 const carMaxSpeed = 0.1;
 
 let playerFinished = false;
-let aiFinished = false;
 let raceEndAnnounced = false;
 
-const aiCar = new THREE.Mesh(new THREE.ConeGeometry(carWidth / 2, carLength, 32), new THREE.MeshLambertMaterial({ color: 0xff0000 }));
-aiCar.rotateX(-(Math.PI / 2));
-aiCar.position.z = 100;
-aiCar.position.y = 0.5;
-aiCar.position.x = 2;
-aiCar.stuckTimer = 0;
-aiCar.lastDodgeDirection = null;
-aiCar.wallCollisionCount = 0;
-scene.add(aiCar);
-
-// Define a faster speed for AI
-const aiBaseSpeed = 0.15;
-const aiDodgeSpeed = 0.15; // Make it dodge as quickly as it moves forward
-
-function updateAIMovement() {
-    // Check if AI has already finished to prevent further updates
-    if (aiFinished) return;
-
-    const forwardRaycaster = new THREE.Raycaster(aiCar.position, new THREE.Vector3(0, 0, -1), 0, rayDistance);
-    const obstacle = forwardRaycaster.intersectObjects(obstacles, true)[0];
-
-    if (aiCar.wallCollisionCount >= 8) {
-        // Reverse a bit and go left
-        if (!aiCar.isReversing) {
-            aiCar.position.z = 30; // Reverse by 10 units
-            aiCar.isReversing = true; // Set reversing flag
-            aiCar.distanceMovedLeft = 0; // Reset distance moved left
-        }
-
-        // Move left by at least the length of the wall
-        if (aiCar.isReversing) {
-            const wallLength = 50; // Replace with your wall's actual length if different
-            aiCar.position.x -= aiDodgeSpeed;
-            aiCar.distanceMovedLeft += aiDodgeSpeed;
-            if (aiCar.distanceMovedLeft >= wallLength) {
-                aiCar.isReversing = false; // Stop reversing behavior
-                aiCar.wallCollisionCount = 0; // Reset wall collision count
-            }
-        }
-    } else if (obstacle && obstacle.distance < 5 && obstacle.object.type === 'wall') {
-        // Increment wall collision count
-        aiCar.wallCollisionCount++;
-        // Dodge behavior
-        let dodgeDirection = aiCar.lastDodgeDirection || (Math.random() < 0.5 ? -1 : 1);
-        aiCar.position.x += dodgeDirection * aiDodgeSpeed;
-        aiCar.lastDodgeDirection = dodgeDirection;
-    } else {
-        // Normal movement behavior
-        aiCar.position.z -= aiBaseSpeed;
-        aiCar.wallCollisionCount = 0; // Reset the collision count since it's a normal move
-    }
-
-    // Ensure the AI car stays on the road
-    aiCar.position.x = THREE.MathUtils.clamp(aiCar.position.x, -roadWidth / 2 + carWidth / 2, roadWidth / 2 - carWidth / 2);
-}
-
-
-
-
-
-
+let holeGeometry;
 let obstacles = [];
 obstacles = obstacles.filter(o => o !== obstacle);
 const obstacleGeometry = new THREE.SphereGeometry(1, 16, 16);
@@ -127,11 +73,6 @@ for (let i = 0; i < 69; i++) {
     scene.add(obstacle);
     obstacles.push(obstacle);
 }
-
-// Assuming aiCar is your AI car mesh
-const raycaster = new THREE.Raycaster();
-const rayDirection = new THREE.Vector3(0, 0, -1); // Ray pointing forward
-const rayDistance = 20; // Max distance to check for obstacles
 
 // Positions for rays to the left and right to check for wider avoidance paths
 const leftRayPosition = new THREE.Vector3(-1, 0, 0);
@@ -220,8 +161,6 @@ for (let i = 0; i < numObstacles; i++) {
     scene.add(wall);
     obstacles.push(wall);
 
-    // Hole
-
 }
 
 for (let i = 0; i < (numObstacles/2); i++) {
@@ -239,70 +178,85 @@ obstacles.push(hole);
 
 function checkCollisions() {
     const carBoundingBox = new THREE.Box3().setFromObject(car);
-    const aiCarBoundingBox = new THREE.Box3().setFromObject(aiCar);
 
     obstacles.forEach(obstacle => {
         const obstacleBoundingBox = new THREE.Box3().setFromObject(obstacle);
 
-        // Collision with Player Car
+        // Check for intersections
         if (carBoundingBox.intersectsBox(obstacleBoundingBox)) {
-            if (obstacle.type === 'wall') {
-                // Wall collision for player
-                if (!obstacle.hasCollided) {
-                    carVelocity.set(0, 0, 0); // Stop the car immediately
-                    const pushBack = 0.9; // Define how far you want to push the car back
-                    car.position.z += pushBack;  // Push back the player a bit
+            if (obstacle.userData.type === 'wall') {
+                // Handle collision with a wall
+                if (!obstacle.userData.hasCollided) {
+                    carVelocity.set(0, 0, 0); // Stop the car
+                    const pushBack = 0.9; // Push back amount
+                    car.position.z += pushBack; // Apply push back
                     console.log('Player hit a wall!');
-                    setTimeout(() => (obstacle.hasCollided = false), 1000); // Reset collision flag
+                    obstacle.userData.hasCollided = true;
+                    setTimeout(() => obstacle.userData.hasCollided = false, 1000);
                 }
-            } else if (obstacle.type === 'hole') {
-                // Hole collision for player
-                if (!obstacle.hasCollided) {
-                    car.position.set(car.position.x, car.position.y, 100); // Send back to start
-                    console.log('Player fell into a hole!');
-                    setTimeout(() => (obstacle.hasCollided = false), 1000); // Reset collision flag
-                }
-            } else {
-                // Regular obstacle collision for player
-                if (!obstacle.collided) {
-                    handleObstacleCollision('Player', obstacle);
-                    obstacle.collided = true; // Mark as collided
-                    setTimeout(() => {
-                        scene.remove(obstacle); // Remove from scene after a delay
-                        obstacles = obstacles.filter(o => o !== obstacle);
-                    }, 100); // Delay before removing the obstacle
-                }
-            }
-        }
-
-        // Collision with AI Car
-        if (aiCarBoundingBox.intersectsBox(obstacleBoundingBox)) {
-            if (obstacle.type === 'wall') {
-                // Wall collision for AI
-                if (!obstacle.hasCollided) {
-                    aiCar.position.z += 0.9;
-                    console.log('AI hit a wall!');
-                    setTimeout(() => (obstacle.hasCollided = false), 1000); // Reset collision flag
-                }
-            } else if (obstacle.type === 'hole') {
-                // Hole collision for AI
-                if (!obstacle.hasCollided) {
-                    aiCar.position.set(aiCar.position.x, aiCar.position.y, 100);
-                    console.log('AI fell into a hole!');
-                    setTimeout(() => (obstacle.hasCollided = false), 1000); // Reset collision flag
-                }
-            } else {
-                // Regular obstacle collision for AI
-                if (!obstacle.collided) {
-                    handleObstacleCollision('AI', obstacle);
-                    obstacle.collided = true; // Mark as collided
-                    // AI specific action for regular obstacle collision if any
-                }
+            } else if (obstacle.userData.type === 'blackhole') {
+                // Handle collision with a blackhole
+                car.position.set(0, 0.5, 100); // Reset car to start
+                console.log('Player fell into a black hole!');
+                // Optionally trigger blackhole animation here
             }
         }
     });
 }
 
+
+function loadModel(url) {
+    return new Promise((resolve, reject) => {
+      loader.load(url, gltf => {
+        resolve(gltf.scene);
+      }, undefined, reject);
+    });
+  }
+  async function initModels() {
+    try {
+        // Load Car Model
+        const carModel = await loadModel('src/assets/rocketlowpoly/scene.gltf');
+        carModel.scale.set(0.5, 0.5, 0.5);
+        carModel.position.set(0, 0.5, 100);
+        carModel.rotateX(-Math.PI / 2);
+        car = carModel;
+        scene.add(car);
+
+        // Load and position Black Hole Model
+        const holeModel = await loadModel('src/assets/blackhole/scene.gltf');
+        holeModel.scale.set(2, 2, 2);
+        for (let i = 0; i < numObstacles / 2; i++) {
+            let hole = holeModel.clone();
+            hole.position.x = (Math.random() - 0.5) * roadWidth;
+            hole.position.z = obstacleStartZ + Math.random() * (obstacleEndZ - obstacleStartZ);
+            hole.userData = { type: 'blackhole' };
+            scene.add(hole);
+            obstacles.push(hole);
+        }
+
+        // Load and position Space Rock Model
+        const wallModel = await loadModel('src/assets/space_rock/scene.gltf');
+        wallModel.scale.set(3, 3, 3); // Adjust this scale if necessary
+        for (let i = 0; i < numObstacles; i++) {
+            let wall = wallModel.clone();
+            wall.position.x = (Math.random() - 0.5) * roadWidth;
+            wall.position.z = obstacleStartZ + Math.random() * (obstacleEndZ - obstacleStartZ);
+            wall.userData = { type: 'wall' };
+            scene.add(wall);
+            obstacles.push(wall);
+        }
+    } catch (error) {
+        console.error('Failed to load model:', error);
+    }
+}   
+
+// Initialize all models on startup
+initModels();
+
+
+function carOnGround() {
+    return car.position.y <= 0; // Simple check for ground contact
+}
 
 const effects = [
     {
@@ -369,21 +323,7 @@ function checkIfFinished() {
         console.log(`Player finished! Score: ${score}`);
     }
 
-    if (aiCar.position.z <= finishLine.position.z && !aiFinished) {
-        aiFinished = true;
-        aiScore = maxScore - ((Date.now() - startTime) / 1000).toFixed(2) * 100;
-        aiScore = Math.max(aiScore, 0); // Ensure score doesn't go negative
-        console.log(`AI finished! Score: ${aiScore}`);
-    }
-
-    // Call to determine the winner
-    if (playerFinished && aiFinished && !raceEndAnnounced) {
-        checkWinner();
-    }
 }
-
-
-let aiScore = 1000; // Initialize AI score, adjust logic for decreasing AI score as needed
 
 // Reset the game to play again or perform other actions as needed
 function resetGame() {
@@ -394,12 +334,6 @@ function resetGame() {
 }
 
 
-if (aiFinished && !aiScoreCalculated) {
-    const aiEndTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    aiScore -= aiEndTime * 100; // Example scoring adjustment based on time
-    aiScore = Math.max(aiScore, 0); // Ensure score doesn't go negative
-    aiScoreCalculated = true; // Prevents recalculating score
-}
 
 
 const animate = () => {
@@ -433,9 +367,6 @@ const animate = () => {
         );
     }   
 
-    if (!aiFinished) {
-        updateAIMovement();
-    }
 
     // Stop the car's movement if finished
     if (playerFinished) {
@@ -463,19 +394,6 @@ const animate = () => {
         console.log(`Player finished! Score: ${score}`);
     }
 
-    // Check if the AI has finished the race
-    if (!aiFinished && aiCar.position.z <= finishLine.position.z) {
-        aiFinished = true;
-        aiScore = maxScore - ((Date.now() - startTime) / 1000) * 100;
-        aiScore = Math.max(aiScore, 0);
-        console.log(`AI finished! Score: ${aiScore}`);
-    }
-
-    // Determine the winner if both have finished
-    if (playerFinished && aiFinished && !raceEndAnnounced) {
-        checkWinner();
-    }
-
     // Check for collisions
     checkCollisions();
 
@@ -490,14 +408,5 @@ const animate = () => {
     // Render the scene
     renderer.render(scene, camera);
 };
-
-
-
-function checkWinner() {
-    // Determine the winner based on the scores
-    const winner = score > aiScore ? 'Player' : (score < aiScore ? 'AI' : 'Tie');
-    console.log(`Race finished! Winner: ${winner}. Player score: ${score}, AI score: ${aiScore}`);
-    raceEndAnnounced = true;
-}
 
 animate();
